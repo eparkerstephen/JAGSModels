@@ -1,11 +1,13 @@
 ---
-title: "Ordered_Logistic_Regression"
+title: "Ordered Logistic Regression"
 author: "Evan"
 date: "October 6, 2014"
 output: html_document
 ---
 
-Public opinion surveys are full of questions that give people short, ordered response options to questions about public policies, real-world events, and much, much more.  A useful model for estimating such response scales is the ordinal logistic regression, or "ordered logit."
+Public opinion surveys ask people to choose from a short list of options to gauge their support for public policy proposals, beliefs about real-world events, and much more.  When the responses can be ordered -- say, from low to high support -- a useful statistical model is the ordered logistic regression, or "ordered logit."
+
+I like using JAGS for these models because (as with any MCMC estimation) it is straightforward to calculate quantities of interest directly.  
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
 library(coda)
@@ -15,30 +17,29 @@ library(plyr)
 ```
 
 
-
-The JAGS code for an ordered logistic regression with six predictors is adapted from [Jackman 2009](http://www.wiley.com/WileyCDA/WileyTitle/productCd-0470011548.html).
+The JAGS code for an ordered logistic regression with a five-category outcome and six predictors is below (code originally in [Jackman 2009](http://www.wiley.com/WileyCDA/WileyTitle/productCd-0470011548.html)).
 
     model{
       for(i in 1:N){  ## loop over observations
     	      ## form the linear predictor (no intercept)
     	      mu[i] <- x[i,1]*beta[1] +
-                     x[i,2]*beta[2] +
-          		       x[i,3]*beta[3] +
-          		       x[i,4]*beta[4] +     
-          		       x[i,5]*beta[5] +  
-          		       x[i,6]*beta[6]
+                        x[i,2]*beta[2] +
+                        x[i,3]*beta[3] +
+                        x[i,4]*beta[4] +
+                        x[i,5]*beta[5] +
+                        x[i,6]*beta[6]
     		       
     	      ## cumulative logistic probabilities
     	      logit(Q[i,1]) <- tau[1]-mu[i]
     	      p[i,1] <- Q[i,1]
     	      for(j in 2:4){
                        logit(Q[i,j]) <- tau[j]-mu[i]
-    		   ## trick to get slice of the cdf we need
-    		   p[i,j] <- Q[i,j] - Q[i,j-1]   
-    	      }
+    		                ## get slice of the cdf
+    		                p[i,j] <- Q[i,j] - Q[i,j-1]   
+	                  }
     	      p[i,5] <- 1 - Q[i,4]
     	      y[i] ~ dcat(p[i,1:5])  ## p[i,] sums to 1 for each i
-    	}
+    	  }
     
     	## priors over betas
     	beta[1:6] ~ dmnorm(b0[],B0[,])
@@ -46,7 +47,7 @@ The JAGS code for an ordered logistic regression with six predictors is adapted 
     	## thresholds
     	for(j in 1:4){
     	      tau0[j] ~ dnorm(0, .01)
-    	}
-    	tau[1:4] <- sort(tau0)  ## JAGS only not in BUGS!
+  	    }
+      tau[1:4] <- sort(tau0)  
     }	
 
