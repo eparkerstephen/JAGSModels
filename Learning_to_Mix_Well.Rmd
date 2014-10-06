@@ -1,3 +1,6 @@
+---
+output: pdf_document
+---
 Mixture Modeling with JAGS
 ==========================
 
@@ -84,7 +87,7 @@ mu2 <- unlist(out[,"mu2",])
 
 
 **Figure 1.** Density estimation for the simulated values of ```mu1``` and ```mu2```
-```{r, echo = FALSE, fig.width = 7, fig.height = 4, fig.align='center', message=FALSE, warning=FALSE, dpi = 144, cache=FALSE}
+```{r, echo = FALSE, fig.width = 7, fig.height = 4,  message=FALSE, warning=FALSE, dpi = 144, cache=FALSE}
 require(ggplot2)
 mu1 <- data.frame(value = mu1, parameter = rep("mu1", length(mu1)))
 mu2 <- data.frame(value = mu2, parameter = rep("mu2", length(mu2)))
@@ -101,7 +104,7 @@ print(p)
 A second point of interest is related to the estimates of belonging to a particular group.  In the model, the ```z[i]``` parameter is distributed Bernoulli.  Thus, at each iteration, every observation is assigned a 0 or 1, indicating the observation's mean is either the sampled value for ```mu1``` or ```mu2```.  Figure 2 presents this assignment variable for the ```z[1]``` parameter at each iteration (left panel) along with the density estimate (right panel).
 
 **Figure 2.** Traceplot and density estimate for the ```z[1]``` parameter
-```{r, echo=TRUE, fig.align='center', fig.width=7, fig.height=6}
+```{r, echo=TRUE,  fig.width=7, fig.height=6}
 plot(out[,"z[1]",])
 ```
 
@@ -115,7 +118,7 @@ Figure 2 plots these average probabilities, where the numeric labels are the ```
 
 **Figure 2.** Each observation's probability of belonging to the ```mu1``` distribution
 
-```{r, echo = FALSE, fig.width=7, fig.height = 14, fig.align='center', message = FALSE, warning = FALSE, dpi=100}
+```{r, echo = FALSE, fig.width=7, fig.height = 14,  message = FALSE, warning = FALSE, dpi=100}
 z <- out[[1]][,grep("z", colnames(out[[1]]))]
 zbar <- colMeans(z)
 zbar <- melt(zbar)
@@ -156,7 +159,7 @@ mu2 <- unlist(out[,"mu2",])
 As is clear in Figure 3, the separation is no longer evident.  The reason is illustrated in Figure 4, which shows that low data points are pushed into a single component.  The solution to this problem is to allow for the three components explicitly in the statistical model.
 
 **Figure 3.** Density estimation for the simulated values of ```mu1``` and ```mu2```
-```{r, echo = FALSE, fig.width = 7, fig.height = 4, fig.align='center', message=FALSE, warning=FALSE, dpi = 144, cache=FALSE}
+```{r, echo = FALSE, fig.width = 7, fig.height = 4,  message=FALSE, warning=FALSE, dpi = 144, cache=FALSE}
 require(ggplot2)
 mu1 <- data.frame(value = mu1, parameter = rep("mu1", length(mu1)))
 mu2 <- data.frame(value = mu2, parameter = rep("mu2", length(mu2)))
@@ -173,7 +176,7 @@ print(p)
 
 **Figure 4.** Each observation's probability of belonging to the ```mu1``` distribution
 
-```{r, echo = FALSE, fig.width=7, fig.height = 14, fig.align='center', message = FALSE, warning = FALSE, dpi=100}
+```{r, echo = FALSE, fig.width=7, fig.height = 14,  message = FALSE, warning = FALSE, dpi=100}
 z <- out[[1]][,grep("z", colnames(out[[1]]))]
 zbar <- colMeans(z)
 zbar <- melt(zbar)
