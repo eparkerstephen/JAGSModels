@@ -1,5 +1,5 @@
 ---
-output: pdf_document
+output: html_document
 ---
 Mixture Modeling with JAGS
 ==========================
@@ -15,7 +15,7 @@ This page is about estimating a mixture models using [JAGS](http://martynplummer
 
 ## Two Component Mixture of Normals
 
-The first mixture model examined considers a distribution comprised of two normal distributions.  First things first, we create the data, pooling two distinct normally-distributed variables -- ```x1```, with a mean of 3 and standard deviation of 2; and ```x2```, with a mean of 10 and standard deviation of 2.  The last puts the data into the list format that JAGS requires.  
+This mixture model analysis uses a composite distribution made up of two independent normal distributions.  First we create the data by pooling two distinct normally-distributed variables -- ```x1```, with a mean of 3 and standard deviation of 2; and ```x2```, with a mean of 10 and standard deviation of 2 -- and put the data into the list format that JAGS requires.  
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
 require(coda)
@@ -44,9 +44,9 @@ The JAGS code for a two-component mixture of normals is:
           }
     }
 
-The parameters we are estimating are the means of the two component distributions, ```mu1``` and ```mu2```.  The model results also provide values ```z[i]``` for each observation's probability of belonging to one of the two component distributions.  
+The parameters we are interested in estimating are the means of the two component distributions, ```mu1``` and ```mu2```.  We know them here, of course, but in a typical analysis we won't know the distributions before hand.  Another interesting feature of the model is that it returns values ```z[i]``` at each sampled iteration, which can be summarized to produce each observation's probability of belonging to one of the two component distributions.  
 
-We pass initial values to JAGS in order to initialize the MCMC simulation.  Note that each ```x[i]``` gets its own mean, but all observations share the variance, which in this case is set to equal 1.
+We pass initial values to JAGS in order to initialize the MCMC simulation.  Each ```x[i]``` gets its own mean, but all observations share a variance equal to 1.
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
 init <- list(mu=array(rnorm(1*data$n)),mu1=rnorm(1), mu2=rnorm(1),sigma=1)
@@ -72,9 +72,9 @@ modelstring="
 "
 ```
 
-We pass the model to JAGS using the ```textConnection()``` function.  The text is entered into ```R``` as the object ```modelstring```.  I prefer to run the MCMC simulation using the ```coda.samples()``` function in the **coda** package.  Another popular package for doing so is **R2Jags**.
+For convenience, the model is passed to JAGS using R's ```textConnection()``` function.  The text is entered into ```R``` as the object ```modelstring```.  I prefer to run the MCMC simulation using the ```coda.samples()``` function in the **coda** package.  
 
-Of particular interest is whether the model can recover the (known) means of the two component distributions (```mu1``` = 3, and ```mu2``` = 10).  Figure 1 plots the simulated values for these parameters.  Despite using highly uninformative priors, the means are easily recovered.
+Of particular interest is how well the model recovers the means of the two component distributions (```mu1``` = 3, and ```mu2``` = 10).  Figure 1 plots the simulated values for these parameters.  Despite the uninformative priors, the means are easily recovered.
 
 ```{r, echo = TRUE, results = 'hide', warning = FALSE, message = FALSE}
 model <- jags.model(textConnection(modelstring), data=data, n.adapt=1e5)
@@ -107,7 +107,6 @@ A second point of interest is related to the estimates of belonging to a particu
 ```{r, echo=TRUE,  fig.width=7, fig.height=6}
 plot(out[,"z[1]",])
 ```
-
 
 
 The average for ```z[i]``` across the entire simulation represents the probability that an observation belongs to one or the other components.  Observations with a value that is close to one mean have sharper assignment probabilities -- that is, an average value that is close to either 0 or 1.
