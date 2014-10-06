@@ -8,6 +8,7 @@ Mixture Modeling with JAGS
 rm(list=ls())
 require(knitr)
 opts_chunk$set(comment=NA, cache=FALSE)
+# short function to round reals
 pFormat <- function(x) {formatC(x, format="f", digits=2)}
 ```
 
@@ -96,8 +97,8 @@ p <- ggplot(df, aes(value, colour=parameter, fill=parameter, colour=parameter))
 p <- p + geom_histogram(binwidth=.1, position='stack') +
   scale_x_continuous("value") +
   scale_y_continuous("count") +
-  scale_fill_brewer(palette="Accent") +
-  scale_colour_brewer(palette="Accent")
+  scale_fill_manual(values=c("deeppink", "darkorchid")) +
+  scale_colour_manual(values=c("deeppink", "darkorchid"))
 print(p)
 ```
 
@@ -167,8 +168,8 @@ p <- ggplot(df, aes(value, colour=parameter, fill=parameter, colour=parameter))
 p <- p + geom_histogram(binwidth=.1, position='stack') +
   scale_x_continuous("value") +
   scale_y_continuous("count") +
-  scale_fill_brewer(palette="Accent") +
-  scale_colour_brewer(palette="Accent")
+  scale_fill_manual(values=c("deeppink", "darkorchid")) +
+  scale_colour_manual(values=c("deeppink", "darkorchid"))
 print(p)
 ```
 
@@ -182,6 +183,7 @@ zbar <- melt(zbar)
 probs <- data.frame(zbar = zbar, obs = rownames(zbar))
 p <- ggplot(probs, aes(value, reorder(obs, value)))
 p <- p + geom_point(size=0) + 
+  theme_bw() + 
   theme(axis.text=element_text(size=4, colour='black')) +
   scale_x_continuous("average of sampled z[i]") +
   scale_y_discrete("observation") +
